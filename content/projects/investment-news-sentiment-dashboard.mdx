@@ -1,0 +1,163 @@
+---
+title: "Investment News Sentiment Analysis Dashboard"
+slug: "investment-news-sentiment-dashboard"
+date: "2024-09-08"
+summary: "A Streamlit dashboard that pairs price charts and fundamentals with AI-powered news sentiment analysis—combining FinBERT scoring and BART summarization to compress scattered headlines into a decision-ready market narrative."
+status: "published"
+tags:
+  - Streamlit
+  - NLP
+  - Sentiment Analysis
+  - FinBERT
+  - Summarization
+  - Quant + Qual
+  - Financial Modeling Prep API (FMP)
+links:
+  live: "https://stock-sentiment-dashboard.streamlit.app/"
+  github: "https://github.com/m-turnergane/stock-sentiment-dashboard"
+  linkedin: "https://www.linkedin.com/pulse/investment-news-sentiment-analysis-dashboard-muhammad-gane-gnqve/?trackingId=FswYbqEwG9P8kMT6Y4Zvlw%3D%3D"
+  x: "https://x.com/turner_obt/status/1832842507161362613"
+stack:
+  - Python
+  - Streamlit
+  - yfinance
+  - NewsAPI
+  - Hugging Face Transformers
+  - FinBERT
+  - BART (Summarization)
+  - Plotly
+---
+
+# Investment News Sentiment Analysis Dashboard
+
+Markets move on numbers _and_ narratives. This project is an attempt to make both legible in one place: a single Streamlit dashboard that pairs price + fundamentals with a summarized “news tone” signal—fast enough to be useful, structured enough to be explainable.
+
+If you want to explore it live, the demo is here:
+
+- **Dashboard:** https://stock-sentiment-dashboard.streamlit.app/
+- **Repository:** https://github.com/m-turnergane/stock-sentiment-dashboard
+
+---
+
+## What I wanted the dashboard to do (and what I explicitly _didn’t_)
+
+Most retail workflows look like this:
+
+1. Open a price chart
+2. Skim a few headlines
+3. Bounce between sources
+4. Leave with a vague feeling, not a decision-ready snapshot
+
+The goal here was to compress steps 2–4 into a single, reviewable artifact:
+
+- **Show the “inputs” (headlines) and the “logic” (sentiment labels/scores)** so the output isn’t a black box.
+- **Generate a short, readable market narrative** so you don’t have to synthesize ten articles manually.
+- **Anchor everything next to the price chart and fundamentals** to keep sentiment in its proper role: context, not a standalone trading signal.
+
+This is not a price-prediction model. It's a _decision-support surface_.
+
+---
+
+## Dashboard Screenshots
+
+<Image
+  src="/images/projects/investment-news-sentiment/overview.png"
+  alt="Dashboard overview showing chart, fundamentals, and sentiment panel"
+  width={1200}
+  height={700}
+/>
+
+_Full dashboard view: price chart, fundamentals, top headlines with sentiment labels, and AI-generated summary in one unified interface._
+
+<Image
+  src="/images/projects/investment-news-sentiment/headlines.png"
+  alt="Top headlines section with sentiment labels"
+  width={1200}
+  height={700}
+/>
+
+_Explainability in action: per-headline sentiment labels (Positive/Negative/Neutral) with confidence scores, so you can audit the overall tone._
+
+<Image
+  src="/images/projects/investment-news-sentiment/summary.png"
+  alt="AI-generated market narrative summary"
+  width={1200}
+  height={700}
+/>
+
+_The narrative synthesis layer: BART-generated summary that compresses scattered headlines into a readable market context snapshot._
+
+---
+
+## System design at a glance
+
+<SentimentPipelineDiagram />
+
+The pipeline follows a structured flow:
+
+1. **Input normalization** — Accept a ticker _or_ common company name, normalize into a ticker symbol.
+2. **Market data layer** — Pull 1Y historical prices + key fundamentals (fast, familiar baseline).
+3. **News retrieval layer** — Fetch a small, recent set of relevant articles (bounded by time window + page size) via NewsAPI's "everything" search.
+4. **Sentiment inference** — Score each headline using FinBERT (financial-domain sentiment model), producing per-headline label + confidence score.
+5. **Narrative synthesis** — Summarize the "bundle" of headlines using a BART summarization model, producing a short digest that matches the dashboard's scanning workflow.
+6. **Presentation layer** — Render: chart, fundamentals, top headlines + sentiment, and an AI-generated summary.
+
+---
+
+## The choices that matter (tradeoffs, not just tooling)
+
+<TradeoffsTable />
+
+If you were productizing this, you'd treat **freshness, latency, and explainability** as first-class metrics, not afterthoughts.
+
+---
+
+## What “good” looks like when you’re using it
+
+A practical workflow is:
+
+- Enter a ticker (or name)
+- Scan the **1Y chart + fundamentals** to set baseline context
+- Read the **top 5 headlines** with sentiment labels to sanity-check the tone
+- Use the **AI summary** as your “market narrative” snapshot
+- Optionally: compare to sector sentiment if you’re deciding between peers
+
+If you leave the page knowing _what the market is talking about_ and _why the tone reads the way it does_, the dashboard did its job.
+
+---
+
+## Operational considerations (the unsexy part that makes it real)
+
+A sentiment dashboard lives and dies by reliability:
+
+- **API key handling:** News retrieval depends on external services (rate limits, downtime, quota management).
+- **Model cold-start:** Transformer models can be slow on first load; caching is not optional if you want a usable UX.
+- **Failure modes:** A resilient dashboard should degrade gracefully:
+  - no news returned → still show chart/fundamentals
+  - API error → show a helpful message + retry path
+  - model load failure → skip summary, preserve the rest
+
+---
+
+## What I’d add in a v2
+
+If I were extending this beyond an MVP:
+
+- **Sentiment trendline** (headline sentiment over time) rather than a single average
+- **Source weighting** (credibility, recency, relevance scoring)
+- **Article-body sentiment** (not just headlines) for higher fidelity
+- **Watchlist mode** (batch analysis for a set of tickers)
+- **Exportable report** (PDF/markdown snapshot for journaling or review)
+
+---
+
+## Build notes (for builders, not just readers)
+
+- Choose a default “demo ticker” that reliably has news coverage.
+- Keep the news window configurable (7–14 days) so you can balance freshness vs stability.
+- Treat “average sentiment” as a **context signal**, not a recommendation engine.
+
+---
+
+> The point of this project isn’t to tell you what to buy.  
+> It’s to reduce time-to-context—without hiding the inputs.

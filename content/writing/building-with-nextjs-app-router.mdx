@@ -1,0 +1,254 @@
+---
+title: "Building with Next.js App Router: Lessons from the Trenches"
+date: "2026-01-10"
+summary: "A deep dive into Next.js 14+ App Router, covering server components, streaming, and practical patterns for production applications."
+tags: ["nextjs", "react", "typescript", "web-development"]
+status: "published"
+links:
+  x: "https://x.com"
+  linkedin: "https://linkedin.com"
+---
+
+# Building with Next.js App Router: Lessons from the Trenches
+
+The Next.js App Router represents a fundamental shift in how we build React applications. After building several production apps with it, here's what I've learned.
+
+## The Mental Model Shift
+
+Coming from Pages Router, the biggest adjustment isn't the file structure—it's the component model.
+
+### Server Components by Default
+
+This is the paradigm shift: **everything is a server component unless you opt in to client**.
+
+```tsx
+// This runs on the server ONLY
+export default async function Page() {
+  const data = await fetchData(); // Direct database access!
+  return <div>{data}</div>;
+}
+```
+
+Benefits:
+- Zero JavaScript shipped for this component
+- Direct database/API access without HTTP layer
+- Improved SEO and initial load time
+
+### Client Components: Use Sparingly
+
+Add `"use client"` only when you need:
+- Browser APIs (`useState`, `useEffect`, event listeners)
+- Interactivity (clicks, forms, animations)
+- Third-party libraries that use hooks
+
+```tsx
+"use client"
+
+import { useState } from 'react'
+
+export function Counter() {
+  const [count, setCount] = useState(0) // Needs client!
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+```
+
+## Streaming & Suspense
+
+One of App Router's killer features is streaming HTML as it's ready.
+
+### The Pattern
+
+```tsx
+import { Suspense } from 'react'
+
+export default function Page() {
+  return (
+    <>
+      <Header /> {/* Loads immediately */}
+      
+      <Suspense fallback={<Skeleton />}>
+        <SlowComponent /> {/* Streams in when ready */}
+      </Suspense>
+      
+      <Suspense fallback={<Skeleton />}>
+        <AnotherSlowComponent />
+      </Suspense>
+    </>
+  )
+}
+```
+
+The browser receives:
+1. Initial HTML with `<Header />` and fallbacks
+2. Streaming chunks as async components resolve
+3. Automatic hydration of client components
+
+### Real-World Impact
+
+On a dashboard I built:
+- **Time to First Byte**: 150ms (down from 1.2s)
+- **First Contentful Paint**: 400ms (down from 1.5s)
+- **User sees something**: Instantly vs waiting for all data
+
+## Data Fetching Patterns
+
+### Colocate Fetching with Components
+
+```tsx
+async function UserProfile({ userId }: { userId: string }) {
+  const user = await db.user.findUnique({ where: { id: userId } })
+  return <div>{user.name}</div>
+}
+```
+
+No more:
+- `getServerSideProps` waterfalls
+- Prop drilling through multiple components
+- Redux for server state
+
+### Parallel Fetching
+
+```tsx
+async function Page() {
+  // These fetch in parallel!
+  const [user, posts] = await Promise.all([
+    fetchUser(),
+    fetchPosts()
+  ])
+  
+  return (
+    <>
+      <UserCard user={user} />
+      <PostList posts={posts} />
+    </>
+  )
+}
+```
+
+### Request Deduplication
+
+Next.js automatically dedupes identical `fetch()` calls:
+
+```tsx
+// Component A
+const data = await fetch('/api/data')
+
+// Component B (same request)
+const data = await fetch('/api/data') // Cached!
+```
+
+## Metadata API
+
+Dynamic SEO without client-side manipulation:
+
+```tsx
+export async function generateMetadata({ params }) {
+  const post = await getPost(params.slug)
+  
+  return {
+    title: post.title,
+    description: post.summary,
+    openGraph: {
+      images: [post.coverImage]
+    }
+  }
+}
+```
+
+## Common Pitfalls
+
+### 1. Serialization Errors
+
+Server components can't pass functions or class instances as props to client components.
+
+```tsx
+// ❌ Won't work
+<ClientComponent onClick={() => {}} />
+
+// ✅ Define handler in client component
+<ClientComponent /> // Handle click internally
+```
+
+### 2. Excessive "use client"
+
+Don't add `"use client"` to entire page if only a button needs it.
+
+```tsx
+// ❌ Bad
+"use client"
+export default function Page() {
+  return (
+    <div>
+      <ServerStuff /> {/* Now running on client! */}
+      <button onClick={() => {}}>Click</button>
+    </div>
+  )
+}
+
+// ✅ Good
+export default function Page() {
+  return (
+    <div>
+      <ServerStuff /> {/* Stays on server */}
+      <InteractiveButton /> {/* Client component */}
+    </div>
+  )
+}
+```
+
+### 3. Layout Confusion
+
+Layouts persist across navigation. Don't put page-specific logic there.
+
+## Performance Wins
+
+### Before App Router
+- Bundle size: 340 KB
+- FCP: 1.5s
+- Interactive: 2.1s
+
+### After App Router
+- Bundle size: 180 KB (47% reduction!)
+- FCP: 400ms (73% improvement!)
+- Interactive: 800ms (62% improvement!)
+
+## When to Use What
+
+| Feature | Use Case |
+|---------|----------|
+| Server Component | Data fetching, layout, static content |
+| Client Component | Interactivity, state, browser APIs |
+| Server Action | Form submissions, mutations |
+| Route Handler | API endpoints, webhooks |
+| Middleware | Auth, redirects, headers |
+
+## Developer Experience
+
+**Pros:**
+- Simpler mental model (once you get it)
+- Less boilerplate
+- Better performance by default
+- TypeScript support is excellent
+
+**Cons:**
+- Learning curve for Pages Router users
+- Ecosystem catching up (some libraries not compatible)
+- Error messages can be cryptic
+
+## Conclusion
+
+The App Router isn't just a new routing system—it's a new way to think about React applications. It pushes complexity to the server where it belongs and delivers minimal JavaScript to clients.
+
+Yes, there's a learning curve. But once it clicks, you'll wonder how you built apps any other way.
+
+The future of React is server-first, and Next.js App Router is leading the charge.
+
+## Resources
+
+- [Next.js App Router Docs](https://nextjs.org/docs/app)
+- [React Server Components RFC](https://github.com/reactjs/rfcs)
+- [Vercel's Streaming Demo](https://vercel.com/templates)
+
+---
+
+**Want to discuss?** Find me on [X](https://x.com) or [LinkedIn](https://linkedin.com).

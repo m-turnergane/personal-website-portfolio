@@ -1,0 +1,66 @@
+---
+title: "Personal Website Portfolio"
+date: "2026-01-15"
+summary: "A digital home for my work—built with Next.js, MDX, and a deliberate aesthetic. Dark, minimal, and meant to evolve."
+tags: ["Next.js", "TypeScript", "Tailwind CSS", "MDX"]
+status: "published"
+links:
+  github: "https://github.com/m-turnergane/personal-website-portfolio"
+coverImage: "/avatar.svg"
+---
+
+# Personal Website Portfolio
+
+This site is what happens when you decide to stop scattering your work across platforms and instead build a single place that feels like yours. A digital footprint—something I can refine over time, share, and leave behind.
+
+## Why I built this
+
+I wanted a space that wasn't borrowed. Not a Medium profile, not a LinkedIn carousel, not a Notion page with a custom domain. Something I could shape from scratch: the structure, the feel, the pace. A place where writing, projects, automation experiments, and trading research could all coexist without fighting for attention.
+
+The design philosophy is simple: dark, minimal, and focused on readability. No sidebar widgets, no newsletter pop-ups, no "engage with this content" nudges. Just the work and the words.
+
+## What's inside
+
+The site is organized into four collections, each with its own list view and detail pages:
+
+- **Deployed Projects** — Production applications and tools I've shipped
+- **Automation & Agents** — Agentic systems, workflow automation, and AI-assisted tooling
+- **Trading Lab** — Quantitative experiments, backtests, and market analysis (some in development)
+- **Writing** — Long-form pieces, tutorials, and reflections
+
+Each entry is an MDX file with frontmatter for metadata (title, date, tags, links) and body content that can include custom React components—diagrams, image strips, styled tables.
+
+## Architecture notes
+
+The site runs on **Next.js 16** with the App Router. Content is loaded at build time from the `content/` directory using a simple filesystem-based approach:
+
+1. MDX files are parsed with `gray-matter` for frontmatter
+2. Content is rendered with `next-mdx-remote`
+3. Custom components are registered for diagrams, callouts, and styled elements
+4. Static generation via `generateStaticParams` keeps pages fast
+
+The animated background is a canvas-based particle field—stars that orbit slowly like a night sky. It respects `prefers-reduced-motion` and pauses when the tab is hidden to avoid unnecessary CPU usage.
+
+## Design decisions
+
+A few deliberate choices:
+
+- **Monochrome palette** — No accent colors competing for attention. Borders and surfaces use `white/10`, `white/20` opacity levels. Text stays readable against near-black backgrounds.
+- **No client-side routing animations** — Page transitions are instant. The site should feel snappy, not sluggish.
+- **Content-first hierarchy** — The homepage has a brief bio and four category cards. Everything else lives in the collections.
+- **Progressive disclosure** — Summary on the card, full content on the detail page. No "read more" links that scroll you two inches down.
+
+## What I'd improve next
+
+If I revisit this with more time:
+
+- **Search** — Full-text search across all collections
+- **Dark/light toggle** — For the rare person who prefers light mode
+- **Reading progress indicator** — For longer articles
+- **View analytics** — Which pieces resonate, which don't
+
+But for now, the site does what I need it to do: it exists, it works, and it's mine.
+
+---
+
+Built with Next.js, TypeScript, Tailwind CSS, and MDX. Source available on [GitHub](https://github.com/m-turnergane/personal-website-portfolio).

@@ -1,27 +1,72 @@
-import './global.css'
-import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import { Navbar } from './components/nav'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import Footer from './components/footer'
-import { baseUrl } from './sitemap'
+import "./global.css";
+import type { Metadata } from "next";
+import { Exo, Inter, Space_Mono } from "next/font/google";
+import { AnimatedBackdrop } from "./components/animated-backdrop";
+import { ParticleField } from "./components/particle-field";
+import { SiteHeader } from "./components/site-header";
+import { SiteFooter } from "./components/site-footer";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { baseUrl } from "./sitemap";
+import { siteConfig } from "@/lib/site-config";
+
+const exo = Exo({
+  subsets: ["latin"],
+  variable: "--font-exo",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-space-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Next.js Portfolio Starter',
-    template: '%s | Next.js Portfolio Starter',
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: 'This is my portfolio.',
+  description: siteConfig.description,
+  keywords: [
+    "AI/ML Developer",
+    "Python",
+    "React",
+    "React Native",
+    "Financial Services",
+    "Fintech",
+    "Automation",
+    "Quantitative Trading",
+    "Full Stack Developer",
+  ],
+  authors: [
+    {
+      name: siteConfig.author.name,
+      url: siteConfig.author.url,
+    },
+  ],
+  creator: siteConfig.author.name,
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
-    url: baseUrl,
-    siteName: 'My Portfolio',
-    locale: 'en_US',
-    type: 'website',
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    creator: "@turner_obt",
   },
   robots: {
     index: true,
@@ -29,38 +74,36 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
-}
+};
 
-const cx = (...classes) => classes.filter(Boolean).join(' ')
+const cx = (...classes) => classes.filter(Boolean).join(" ");
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html
       lang="en"
-      className={cx(
-        'text-black bg-white dark:text-white dark:bg-black',
-        GeistSans.variable,
-        GeistMono.variable
-      )}
+      className={cx(exo.variable, inter.variable, spaceMono.variable)}
     >
-      <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
-          <Navbar />
-          {children}
-          <Footer />
-          <Analytics />
-          <SpeedInsights />
+      <body className="antialiased">
+        <AnimatedBackdrop />
+        <ParticleField />
+        <SiteHeader />
+        <main className="relative min-h-screen pt-32 pb-16">
+          <div className="max-w-4xl mx-auto px-6">{children}</div>
         </main>
+        <SiteFooter />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
-  )
+  );
 }
