@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { SocialLinks } from "./components/social-links";
 import { useScrollReveal } from "./hooks/useScrollReveal";
 import { useProgressiveFade } from "./hooks/useProgressiveFade";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 
 function Hero() {
   return (
@@ -51,6 +52,7 @@ function Hero() {
 
 function AboutSection() {
   const { ref, style } = useProgressiveFade();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <section ref={ref} style={style} className="max-w-3xl mx-auto py-20">
@@ -58,6 +60,7 @@ function AboutSection() {
         About
       </h2>
       <div className="space-y-6 text-lg text-zinc-300 leading-relaxed">
+        {/* Always visible first paragraph */}
         <p>
           In life, we all move through our own wayward journeys in search of
           fulfillment—suitability in a craft, happiness (no matter how
@@ -69,41 +72,63 @@ function AboutSection() {
           built this website as a culmination of my body of work so far, and
           whatever is still to come.
         </p>
-        <p>
-          Before I can even remember, as a child I’d spend hours with language:
-          reading science fiction and fantasy, writing poems and short stories,
-          taking pieces of my reality and feeding them into the inner machinery
-          of my mind. I’d get lost in the idea that something as simple as a
-          sequence of words could ignite imagination—so that, when you closed
-          your eyes, those words could feel more real than the world around you.
-          I could see the worlds J.R.R. Tolkien, Patrick Rothfuss, and Frank
-          Herbert created somehow, despite them existing only in prose.
-        </p>
-        <p>
-          As I got older, I found myself pulled more and more toward
-          programming. It felt like the same kind of magic—another language you
-          could learn, another way to bring something into existence that wasn’t
-          there before. The more I built, the more I realized software could be
-          its own form of world-making: creative freedom with structure,
-          imagination with constraints, ideas turned into realities that other
-          people (and I) could disappear into for hours. A sense of escapism, a
-          sense of wonder, and a sense of discovery—qualities I used to
-          associate only with the best fiction.
-        </p>
-        <p>
-          This site is meant to be a living document: a digital footprint I get
-          to leave behind, refine over time, and share. I hope what you find
-          here gives you even a small uptick in happiness, efficiency, or
-          usefulness. To close, a quote that feels fitting—for my journey, and
-          for all of ours:
-        </p>
-        <p className="italic">
-          "Our vanity, our passions, our spirit of imitation, our abstract
-          intelligence, our habits have long been at work, and it is the task of
-          art to undo this work of theirs, making us travel back in the
-          direction from which we have come to the depths where what has really
-          existed lies unknown within us." - Marcel Proust (1871 - 1922)"
-        </p>
+
+        {/* Collapsible content */}
+        <div
+          className={`space-y-6 overflow-hidden transition-all duration-500 ease-in-out ${
+            isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <p>
+            Before I can even remember, as a child I'd spend hours with language:
+            reading science fiction and fantasy, writing poems and short stories,
+            taking pieces of my reality and feeding them into the inner machinery
+            of my mind. I'd get lost in the idea that something as simple as a
+            sequence of words could ignite imagination—so that, when you closed
+            your eyes, those words could feel more real than the world around you.
+            I could see the worlds J.R.R. Tolkien, Patrick Rothfuss, and Frank
+            Herbert created somehow, despite them existing only in prose.
+          </p>
+          <p>
+            As I got older, I found myself pulled more and more toward
+            programming. It felt like the same kind of magic—another language you
+            could learn, another way to bring something into existence that wasn't
+            there before. The more I built, the more I realized software could be
+            its own form of world-making: creative freedom with structure,
+            imagination with constraints, ideas turned into realities that other
+            people (and I) could disappear into for hours. A sense of escapism, a
+            sense of wonder, and a sense of discovery—qualities I used to
+            associate only with the best fiction.
+          </p>
+          <p>
+            This site is meant to be a living document: a digital footprint I get
+            to leave behind, refine over time, and share. I hope what you find
+            here gives you even a small uptick in happiness, efficiency, or
+            usefulness. To close, a quote that feels fitting—for my journey, and
+            for all of ours:
+          </p>
+          <p className="italic">
+            "Our vanity, our passions, our spirit of imitation, our abstract
+            intelligence, our habits have long been at work, and it is the task of
+            art to undo this work of theirs, making us travel back in the
+            direction from which we have come to the depths where what has really
+            existed lies unknown within us." - Marcel Proust (1871 - 1922)"
+          </p>
+        </div>
+
+        {/* Expand/Collapse button */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center gap-2 mx-auto text-sm text-zinc-400 hover:text-white transition-colors duration-200 group"
+          aria-expanded={isExpanded}
+        >
+          <span>{isExpanded ? "Show less" : "Read more"}</span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-300 ${
+              isExpanded ? "rotate-180" : ""
+            }`}
+          />
+        </button>
       </div>
     </section>
   );
