@@ -80,39 +80,41 @@ function AboutSection() {
           }`}
         >
           <p>
-            Before I can even remember, as a child I'd spend hours with language:
-            reading science fiction and fantasy, writing poems and short stories,
-            taking pieces of my reality and feeding them into the inner machinery
-            of my mind. I'd get lost in the idea that something as simple as a
-            sequence of words could ignite imagination—so that, when you closed
-            your eyes, those words could feel more real than the world around you.
-            I could see the worlds J.R.R. Tolkien, Patrick Rothfuss, and Frank
-            Herbert created somehow, despite them existing only in prose.
+            Before I can even remember, as a child I'd spend hours with
+            language: reading science fiction and fantasy, writing poems and
+            short stories, taking pieces of my reality and feeding them into the
+            inner machinery of my mind. I'd get lost in the idea that something
+            as simple as a sequence of words could ignite imagination—so that,
+            when you closed your eyes, those words could feel more real than the
+            world around you. I could see the worlds J.R.R. Tolkien, Patrick
+            Rothfuss, and Frank Herbert created somehow, despite them existing
+            only in prose.
           </p>
           <p>
             As I got older, I found myself pulled more and more toward
-            programming. It felt like the same kind of magic—another language you
-            could learn, another way to bring something into existence that wasn't
-            there before. The more I built, the more I realized software could be
-            its own form of world-making: creative freedom with structure,
-            imagination with constraints, ideas turned into realities that other
-            people (and I) could disappear into for hours. A sense of escapism, a
-            sense of wonder, and a sense of discovery—qualities I used to
-            associate only with the best fiction.
+            programming. It felt like the same kind of magic—another language
+            you could learn, another way to bring something into existence that
+            wasn't there before. The more I built, the more I realized software
+            could be its own form of world-making: creative freedom with
+            structure, imagination with constraints, ideas turned into realities
+            that other people (and I) could disappear into for hours. A sense of
+            escapism, a sense of wonder, and a sense of discovery—qualities I
+            used to associate only with the best fiction.
           </p>
           <p>
-            This site is meant to be a living document: a digital footprint I get
-            to leave behind, refine over time, and share. I hope what you find
-            here gives you even a small uptick in happiness, efficiency, or
+            This site is meant to be a living document: a digital footprint I
+            get to leave behind, refine over time, and share. I hope what you
+            find here gives you even a small uptick in happiness, efficiency, or
             usefulness. To close, a quote that feels fitting—for my journey, and
             for all of ours:
           </p>
           <p className="italic">
             "Our vanity, our passions, our spirit of imitation, our abstract
-            intelligence, our habits have long been at work, and it is the task of
-            art to undo this work of theirs, making us travel back in the
-            direction from which we have come to the depths where what has really
-            existed lies unknown within us." - Marcel Proust (1871 - 1922)"
+            intelligence, our habits have long been at work, and it is the task
+            of art to undo this work of theirs, making us travel back in the
+            direction from which we have come to the depths where what has
+            really existed lies unknown within us." - Marcel Proust (1871 -
+            1922)"
           </p>
         </div>
 
