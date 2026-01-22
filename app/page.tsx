@@ -76,8 +76,8 @@ function AboutSection() {
           of my mind. I’d get lost in the idea that something as simple as a
           sequence of words could ignite imagination—so that, when you closed
           your eyes, those words could feel more real than the world around you.
-          I could see the worlds J.R.R. Tolkien and Frank Herbert created
-          somehow, despite them existing only in prose.
+          I could see the worlds J.R.R. Tolkien, Patrick Rothfuss, and Frank
+          Herbert created somehow, despite them existing only in prose.
         </p>
         <p>
           As I got older, I found myself pulled more and more toward
@@ -215,7 +215,7 @@ function CategoryGrid() {
     {
       title: "Writing",
       description:
-        "Technical articles, tutorials, and thoughts on software development. Sharing knowledge and experiences.",
+        "Short stories, poetry, and personal reflections. Other worlds, built from prose.",
       href: "/writing",
       imageSrc: "/images/categories/writing.png",
       delay: 300,
@@ -225,7 +225,7 @@ function CategoryGrid() {
   return (
     <section className="py-20">
       <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
-        Explore
+        Vault
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map((category) => (

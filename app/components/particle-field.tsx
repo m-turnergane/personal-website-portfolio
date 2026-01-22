@@ -96,7 +96,7 @@ export function ParticleField() {
 
         // Orbit speed varies by layer - deeper stars appear to move slower
         const baseOrbitSpeed =
-          layer === "deep" ? 0.00003 : layer === "mid" ? 0.00005 : 0.00008;
+          layer === "deep" ? 0.00004 : layer === "mid" ? 0.0000575 : 0.000092;
         const orbitSpeed = baseOrbitSpeed * (0.8 + Math.random() * 0.4);
 
         // Size varies by layer
@@ -163,7 +163,7 @@ export function ParticleField() {
         ctx.clearRect(0, 0, width, height);
 
         // Update global rotation (very slow)
-        globalRotationRef.current += 0.0001;
+        globalRotationRef.current += 0.000115;
 
         // Draw stars by layer (deep first, then mid, then near)
         const layers: ("deep" | "mid" | "near")[] = ["deep", "mid", "near"];
