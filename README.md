@@ -1,5 +1,7 @@
 # Personal Website Portfolio
 
+**Live Site:** [https://muhammadgane.com](https://muhammadgane.com)
+
 A personal portfolio and writing space built with Next.js, TypeScript, and Tailwind CSS. This site is a living document—a digital footprint meant to be refined over time, showcasing projects, automation experiments, trading research, and technical writing.
 
 The goal was simple: create a space that feels like mine. Dark, minimal, and focused on readability. No distractions, no clutter—just the work and the words.
@@ -15,15 +17,15 @@ The goal was simple: create a space that feels like mine. Dark, minimal, and foc
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript (strict mode) |
-| Styling | Tailwind CSS v4 |
-| Content | MDX with gray-matter frontmatter |
-| Fonts | Geist (via `next/font`) |
-| Analytics | Vercel Analytics & Speed Insights (optional) |
-| Deployment | Vercel (recommended) |
+| Layer      | Technology                                   |
+| ---------- | -------------------------------------------- |
+| Framework  | Next.js 16 (App Router)                      |
+| Language   | TypeScript (strict mode)                     |
+| Styling    | Tailwind CSS v4                              |
+| Content    | MDX with gray-matter frontmatter             |
+| Fonts      | Geist (via `next/font`)                      |
+| Analytics  | Vercel Analytics & Speed Insights (optional) |
+| Deployment | Vercel (recommended)                         |
 
 ## Local Development
 
@@ -50,11 +52,11 @@ The site will be available at `http://localhost:3000`.
 
 ### Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start development server with hot reload |
-| `pnpm build` | Create production build |
-| `pnpm start` | Start production server |
+| Command      | Description                              |
+| ------------ | ---------------------------------------- |
+| `pnpm dev`   | Start development server with hot reload |
+| `pnpm build` | Create production build                  |
+| `pnpm start` | Start production server                  |
 
 ## Environment Variables
 
@@ -62,8 +64,8 @@ The site will be available at `http://localhost:3000`.
 
 Optional variables (see `.env.example`):
 
-| Variable | Purpose | Required |
-|----------|---------|----------|
+| Variable               | Purpose                         | Required                   |
+| ---------------------- | ------------------------------- | -------------------------- |
 | `NEXT_PUBLIC_SITE_URL` | Canonical URL for SEO/OG images | No (defaults to localhost) |
 
 Analytics are automatically configured when deployed to Vercel—no manual setup needed.

@@ -7,7 +7,6 @@ import { SiteHeader } from "./components/site-header";
 import { SiteFooter } from "./components/site-footer";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { baseUrl } from "./sitemap";
 import { siteConfig } from "@/lib/site-config";
 
 const exo = Exo({
@@ -30,7 +29,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.title,
     template: `%s | ${siteConfig.name}`,
@@ -61,12 +60,21 @@ export const metadata: Metadata = {
     title: siteConfig.title,
     description: siteConfig.description,
     siteName: siteConfig.name,
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: `${siteConfig.name} – Portfolio`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
     creator: "@turner_obt",
+    images: ["/og.png"],
   },
   robots: {
     index: true,
@@ -79,9 +87,14 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
-const cx = (...classes) => classes.filter(Boolean).join(" ");
+const cx = (...classes: (string | undefined | false)[]) =>
+  classes.filter(Boolean).join(" ");
 
 export default function RootLayout({
   children,
