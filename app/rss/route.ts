@@ -33,7 +33,9 @@ export async function GET() {
         `<item>
           <title>${escapeXml(post.frontmatter.title)}</title>
           <link>${baseUrl}/${post.collection}/${post.slug}</link>
-          <description>${escapeXml(post.frontmatter.summary || "")}</description>
+          <description>${escapeXml(
+            post.frontmatter.summary || ""
+          )}</description>
           <pubDate>${new Date(post.frontmatter.date).toUTCString()}</pubDate>
         </item>`
     )
