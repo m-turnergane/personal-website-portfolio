@@ -1,6 +1,6 @@
 import "./global.css";
 import type { Metadata } from "next";
-import { Exo, Inter, Space_Mono } from "next/font/google";
+import { Cormorant_Garamond, Exo, Inter, Space_Mono } from "next/font/google";
 import { AnimatedBackdrop } from "./components/animated-backdrop";
 import { ParticleField } from "./components/particle-field";
 import { SiteHeader } from "./components/site-header";
@@ -25,6 +25,13 @@ const spaceMono = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--font-space-mono",
+  display: "swap",
+});
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -104,7 +111,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cx(exo.variable, inter.variable, spaceMono.variable)}
+      className={cx(exo.variable, inter.variable, spaceMono.variable, cormorantGaramond.variable)}
     >
       <body className="antialiased">
         <AnimatedBackdrop />

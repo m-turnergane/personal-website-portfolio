@@ -407,3 +407,33 @@ a {
 a:hover {
   color: var(--text-primary);
 }
+
+/* ========== Poetry / Writing Page ========== */
+.font-poem {
+  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+}
+
+.poem-full-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+.poem-section {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.poem-section-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poem-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
