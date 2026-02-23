@@ -5,6 +5,7 @@ import { AnimatedBackdrop } from "./components/animated-backdrop";
 import { ParticleField } from "./components/particle-field";
 import { SiteHeader } from "./components/site-header";
 import { SiteFooter } from "./components/site-footer";
+import { SubscribeModal } from "./components/subscribe-modal";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { siteConfig } from "@/lib/site-config";
@@ -121,6 +122,7 @@ export default function RootLayout({
           <div className="max-w-4xl mx-auto px-6">{children}</div>
         </main>
         <SiteFooter />
+        <SubscribeModal />
         <Analytics />
         <SpeedInsights />
       </body>

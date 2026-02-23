@@ -1,4 +1,5 @@
 import { SocialLinks } from "./social-links";
+import { SubscribeTrigger } from "./subscribe-trigger";
 import { siteConfig } from "@/lib/site-config";
 
 export function SiteFooter() {
@@ -12,9 +13,13 @@ export function SiteFooter() {
             <p className="text-sm text-neutral-500">
               © {currentYear} {siteConfig.name}. All rights reserved.
             </p>
-            <p className="text-xs text-neutral-600">
-              Built with Next.js, TypeScript, and Tailwind CSS
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-xs text-neutral-600">
+                Built with Next.js, TypeScript, and Tailwind CSS
+              </p>
+              <span className="text-neutral-700">&middot;</span>
+              <SubscribeTrigger />
+            </div>
           </div>
 
           <SocialLinks />

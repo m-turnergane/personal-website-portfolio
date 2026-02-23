@@ -437,3 +437,54 @@ a:hover {
     transition: none;
   }
 }
+
+/* ========== Subscribe Modal ========== */
+.subscribe-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.subscribe-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.subscribe-modal {
+  position: fixed;
+  z-index: 70;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95) translateY(8px);
+  width: calc(100% - 32px);
+  max-width: 420px;
+  background: rgba(18, 18, 18, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 28px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.subscribe-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subscribe-backdrop,
+  .subscribe-modal {
+    transition: none;
+  }
+}
