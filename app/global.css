@@ -75,17 +75,7 @@ samp {
   color: var(--text-primary);
 }
 
-/* ========== Minimal Background Animations ========== */
-@keyframes grid-pulse {
-  0%,
-  100% {
-    opacity: 0.02;
-  }
-  50% {
-    opacity: 0.04;
-  }
-}
-
+/* ========== Night Sky Backdrop ========== */
 .animated-backdrop {
   position: fixed;
   top: 0;
@@ -97,17 +87,17 @@ samp {
   pointer-events: none;
 }
 
-/* Minimal grid overlay */
-.grid-overlay {
+/* Atmospheric sky: near-black horizon → deep blue-indigo zenith */
+.sky-gradient {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.02) 1px,
-      transparent 1px
-    ),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 50px 50px;
-  animation: grid-pulse 8s ease-in-out infinite;
+  background: linear-gradient(
+    180deg,
+    #0a0c14 0%,
+    #0a0b12 35%,
+    #0a0a0a 70%,
+    #080808 100%
+  );
 }
 
 /* Subtle noise texture overlay */
@@ -123,11 +113,6 @@ samp {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  .grid-overlay {
-    animation: none;
-    opacity: 0.01;
   }
 
   * {

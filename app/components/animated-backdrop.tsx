@@ -1,7 +1,7 @@
 export function AnimatedBackdrop() {
   return (
     <div className="animated-backdrop">
-      <div className="grid-overlay" />
+      <div className="sky-gradient" />
       <div className="noise-overlay" />
     </div>
   );
