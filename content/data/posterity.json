@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "updated": "2026-09-23",
+  "timezone": "America/New_York",
+  "brand": {
+    "name": "Posterity",
+    "tagline": "History remembers the victors. We remember the rest.",
+    "shortBio": "Dark history & forgotten kingdoms. History remembers the victors. We remember the rest.",
+    "about": "Posterity is a forbidden archive of dark history, vanished kingdoms, mythology, and folklore. Cinematic short-form stories — documented where history is solid, labeled when it's legend.",
+    "handles": {
+      "youtube": "@PosterityArchive",
+      "tiktok": "@posterity.archive",
+      "instagram": "@posterityarchive"
+    },
+    "urls": {
+      "youtubeChannel": "https://www.youtube.com/@PosterityArchive",
+      "tiktok": "https://www.tiktok.com/@posterity.archive",
+      "instagram": "https://www.instagram.com/posterityarchive/"
+    },
+    "format": "9:16 Shorts / Reels / TikTok",
+    "cadence": "~1 approved master short per day (Phase A)"
+  },
+  "cta": {
+    "primary": {
+      "label": "Watch on YouTube",
+      "href": "https://www.youtube.com/@PosterityArchive?utm_source=muhammadgane&utm_medium=site&utm_campaign=posterity_case_study"
+    },
+    "secondary": [
+      {
+        "label": "TikTok",
+        "href": "https://www.tiktok.com/@posterity.archive?utm_source=muhammadgane&utm_medium=site&utm_campaign=posterity_case_study"
+      },
+      {
+        "label": "Instagram",
+        "href": "https://www.instagram.com/posterityarchive/?utm_source=muhammadgane&utm_medium=site&utm_campaign=posterity_case_study"
+      }
+    ]
+  },
+  "agents": [
+    {
+      "name": "Vellum",
+      "role": "Editor-in-Chief",
+      "owns": "Editorial direction, quality bar, owner thread, publish gate"
+    },
+    {
+      "name": "Archivist",
+      "role": "Research",
+      "owns": "Discovery, scoring, fact packs, rights"
+    },
+    {
+      "name": "Scriptor",
+      "role": "Writing",
+      "owns": "VO scripts, hooks, titles, sequence briefs"
+    },
+    {
+      "name": "Atelier",
+      "role": "Production",
+      "owns": "Assemble, QA, masters, publish ops"
+    },
+    {
+      "name": "Pulse",
+      "role": "Growth & analytics",
+      "owns": "Metrics ledger, hypotheses, competitive scan"
+    }
+  ],
+  "pipeline": [
+    "Discover & score topics",
+    "INFO PACKET + full VO",
+    "Owner generates plates",
+    "Assemble rough (VO, captions, music, unique outro)",
+    "Mute gate + human look",
+    "Publish YouTube → TikTok → Instagram",
+    "Pin discussion question; log experiment"
+  ],
+  "episodes": [
+    {
+      "day": 1,
+      "date": "2026-09-13",
+      "slug": "schliemann-troy",
+      "title": "He Found Troy by Destroying It",
+      "lane": "evergreen irony",
+      "status": "live",
+      "youtubeShortsId": "oV6E4QmFvlQ",
+      "links": {
+        "youtube": "https://youtube.com/shorts/oV6E4QmFvlQ",
+        "tiktok": null,
+        "instagram": null
+      }
+    },
+    {
+      "day": 2,
+      "date": "2026-09-14",
+      "slug": "carthage-salt",
+      "title": "Carthage — He Never Salted It",
+      "lane": "myth-bust",
+      "status": "live",
+      "youtubeShortsId": "684X3TkuSVQ",
+      "links": {
+        "youtube": "https://youtube.com/shorts/684X3TkuSVQ",
+        "tiktok": "https://www.tiktok.com/@posterity.archive/video/7685462712800906517",
+        "instagram": "https://www.instagram.com/reel/DdR3OWOKZh0/"
+      }
+    },
+    {
+      "day": 3,
+      "date": "2026-09-15",
+      "slug": "nero-fiddle",
+      "title": "Nero — He Never Fiddled",
+      "lane": "Roman myth-bust",
+      "status": "live",
+      "youtubeShortsId": "0vXLVOhfsR8",
+      "links": {
+        "youtube": "https://youtube.com/shorts/0vXLVOhfsR8",
+        "tiktok": "https://www.tiktok.com/@posterity.archive/video/7685786408308559120",
+        "instagram": "https://www.instagram.com/p/DdUEEx_Kj3N/"
+      }
+    },
+    {
+      "day": 4,
+      "date": "2026-09-16",
+      "slug": "great-zimbabwe",
+      "title": "Great Zimbabwe",
+      "lane": "forgotten kingdom",
+      "status": "live",
+      "youtubeShortsId": "0z-Uh77Zkoo",
+      "links": {
+        "youtube": "https://www.youtube.com/shorts/0z-Uh77Zkoo",
+        "tiktok": "https://www.tiktok.com/@posterity.archive/video/7686213440989449492",
+        "instagram": "https://www.instagram.com/p/DdXCBqSK2BX/"
+      }
+    },
+    {
+      "day": 5,
+      "date": "2026-09-20",
+      "slug": "aksum-fourth-power",
+      "title": "The Fourth Power History Mislaid",
+      "lane": "forgotten kingdom",
+      "status": "live",
+      "youtubeShortsId": "a1q-3kvVd4c",
+      "links": {
+        "youtube": "https://www.youtube.com/shorts/a1q-3kvVd4c",
+        "tiktok": "https://www.tiktok.com/@posterity.archive/video/7687672612918496533",
+        "instagram": "https://www.instagram.com/p/DdhJPceKo88/"
+      }
+    },
+    {
+      "day": 6,
+      "date": "2026-09-21",
+      "slug": "thonis-heracleion",
+      "title": "Before Alexandria, This Port Ruled Egypt's Mouth",
+      "lane": "forgotten port",
+      "status": "live",
+      "youtubeShortsId": "erZwrnt9ag0",
+      "links": {
+        "youtube": "https://www.youtube.com/shorts/erZwrnt9ag0",
+        "tiktok": "https://www.tiktok.com/@posterity.archive/video/7688003887671889153",
+        "instagram": "https://www.instagram.com/reel/DdjlT9yKCaw/"
+      }
+    },
+    {
+      "day": 7,
+      "date": "2026-09-22",
+      "slug": "nan-madol-saudeleur",
+      "title": "This Capital Had No Roads",
+      "lane": "forgotten capital",
+      "status": "live",
+      "youtubeShortsId": "hNtYQxJClNU",
+      "links": {
+        "youtube": "https://youtube.com/shorts/hNtYQxJClNU",
+        "tiktok": "https://www.tiktok.com/@posterity.archive/video/7688356836088728852",
+        "instagram": "https://www.instagram.com/p/Ddl4lYDKvar/"
+      }
+    },
+    {
+      "day": 8,
+      "date": "2026-09-23",
+      "slug": "chan-chan-chimu",
+      "title": "Chan Chan: The Mud Capital the Empire Took",
+      "lane": "adobe capital / conquest",
+      "status": "yt-only",
+      "youtubeShortsId": null,
+      "links": {
+        "youtube": null,
+        "tiktok": null,
+        "instagram": null
+      }
+    }
+  ]
+}

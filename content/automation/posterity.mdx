@@ -1,0 +1,180 @@
+---
+title: "Building an AI Editorial Desk: What I Automated, What I Kept Human, and What Broke"
+subtitle: "How a small multi-agent newsroom researches, writes and produces history Shorts while a human still owns the taste."
+eyebrow: "Case study · Posterity"
+seoTitle: "Posterity: Building a Multi-Agent Editorial Desk"
+date: "2026-09-23"
+summary: "Posterity is a short-form history channel run by a small multi-agent editorial desk. How the desk is structured, where I stay in the loop, and what broke once it was running every day."
+description: "How I run Posterity, a short-form history channel, with a multi-agent editorial desk: specialist agents, one Editor-in-Chief, human quality gates, and what broke."
+tags: ["Multi-agent systems", "Agentic workflows", "Human-in-the-loop", "AI media production", "YouTube Shorts"]
+status: "published"
+layout: "longform"
+theme: "posterity"
+---
+
+Posterity is a faceless short-form history channel. It tells cinematic stories about dark history, vanished kingdoms, mythology and folklore, documented where the record is solid and labelled where it's legend. Its line is *History remembers the victors. We remember the rest.*
+
+This write-up isn't really about the videos. It's about the system that makes them: a small AI editorial desk of specialist agents, one Editor-in-Chief that owns the quality bar, and me, sitting at a few deliberate gates. It has been publishing since September 13, 2026. Some of the design held up and some of it didn't. The parts that didn't are the more useful half of this article.
+
+<PosterityIdentity />
+
+## The problem with one agent
+
+A good 75-second history Short takes a lot more than a script. Someone has to find a story worth telling and check that it can hook a viewer in under two seconds. Then it has to be researched, and someone has to think about which imagery can legitimately be used. After that comes the voiceover, a shot-by-shot visual plan, the images themselves, narration, the edit, a quality check, and publishing to three platforms with different rules. Then someone reads the results and uses them to choose the next story.
+
+The obvious design is to hand one capable agent the whole job. I didn't, and the reason has less to do with capability than with inspection. When one agent owns everything, a weak episode has no address. Was the topic wrong, the research thin, the script flat or the edit sloppy? Every correction lands on the whole thing at once, and the agent's context fills with every stage's details whether or not they matter to the step it's on.
+
+So I split the work the way a newsroom would, by stage and by ownership.
+
+## The desk
+
+Five agents, one human. Each specialist owns a stage:
+
+- **Archivist** finds and scores candidate stories, builds fact packs and thinks about rights.
+- **Scriptor** writes the voiceover, hooks, titles and sequence briefs.
+- **Atelier** assembles the cut, runs QA, produces masters and handles publishing operations.
+- **Pulse** keeps the metrics ledger, forms growth hypotheses and scans comparable channels.
+
+Above them sits **Vellum**, the Editor-in-Chief and showrunner. Vellum owns editorial direction and the quality bar, greenlights topics, and gates cuts before I see them.
+
+<PosterityDeskDiagram />
+
+The most important rule is about communication, not capability. Specialists can talk to each other as much as they need to, but only Vellum talks to me day to day.
+
+That sounds like etiquette. In practice it's what keeps the desk usable. Without it, five agents each report status, each ask small questions, and each raise decisions that belong together in separate threads. I end up as the integration layer, reconciling fragments across chats. With it, there is one thread and one voice accountable for the state of the desk, and decisions reach me already framed. It also saves tokens, because parallel status updates are pure overhead.
+
+## The packet is the interface
+
+Every morning the desk delivers an **INFO PACKET**. It looks like a status update, but it works more like an executable spec for one episode:
+
+- why this story, and why now
+- the narrator's arc
+- the full voiceover
+- five to seven sequences, each with a brief for the imagery I'll generate, tagged as evidence, reconstruction or map
+- bans: what the episode must avoid
+- thumbnail concepts, metadata and a music note
+
+It arrives alongside the final script, and both come as complete documents. A summary doesn't count, because I'm reviewing the actual words that will be spoken and the actual briefs I'll be working from.
+
+<InfoPacket />
+
+This is the most transferable thing Posterity has taught me about agent systems: **a well-structured intermediate artifact is a better coordination surface than conversation.** When agents talk freely to each other, they drift, repeat themselves and lose decisions in the scrollback. A document with fixed sections can be reviewed, compared with yesterday's, handed to the next stage intact, and corrected in exactly the right place. If a thumbnail concept is wrong, I know which section to fix and who wrote it.
+
+## Where I stay in the loop
+
+The desk is deliberately not autonomous. Today's pattern:
+
+1. The agents research and prepare the packet.
+2. I review it.
+3. I generate and select the visual plates, including a unique outro.
+4. Atelier assembles the rough cut.
+5. Vellum runs the mute gate.
+6. I take a final look.
+7. Only then does it publish.
+
+> Automation is the desk. Taste is the gate.
+
+Plates show most clearly where that line sits. Early on, the agents produced pools of candidate images on contact sheets for me to choose from. Since September 20, I make the plates myself. The packet gives me a brief for each sequence, I draft the imagery with dedicated image models, and I hand the results back for the desk to fold into the story. Thumbnails went the same way, and I now design and upload them by hand. Neither change was a statement of principle. Both steps moved to me when the agent output stopped meeting the bar, which I come back to below.
+
+## How a Short gets made
+
+An episode moves through five phases. Agents do most of the steps. The gates are where I, or Vellum on my behalf, can stop it.
+
+<PosterityPipeline />
+
+The publishing order is a standing rule, not a preference. YouTube goes first. TikTok and Instagram follow only once the YouTube Short is public, never alongside a draft. Every upload gets an open discussion question pinned under it. YouTube Shorts is the channel's growth priority, so everything else waits for it.
+
+## The Recovered Chronicle
+
+The visual system has a name, **The Recovered Chronicle**, which gives every stage the same reference point. It has three layers, each with a job, and a short list of standing rules that turn parts of taste into something checkable.
+
+<RecoveredChronicle />
+
+None of this automates taste. What it does is turn the parts of taste that *can* be written down into rules any stage can check. That leaves my attention for the parts that can't be written down: whether a plate feels right, whether the story lands, whether the ending earns its question.
+
+## The feedback loop
+
+Each morning, before the next packet is written, the desk runs a scheduled loop over analytics and the competitive landscape. Pulse updates the ledger, scans comparable channels and turns what it finds into a hypothesis. Vellum then decides whether that hypothesis fits the channel before it shapes the next pick.
+
+<FeedbackLoop />
+
+The key design choice is where the brand sits in that loop. It constrains the output. The metrics don't get to rewrite it. That distinction was tested within the first week.
+
+## Watch the desk's output
+
+These are the episodes shipped so far, in publishing order. The lane labels show the arc: two Roman myth-busts early, then a deliberate turn toward forgotten kingdoms and places told as stories.
+
+<EpisodeShelf />
+
+## What I learned running it
+
+<FieldNote n="1" title="One thread to the human is worth more than it sounds" rule="Specialists coordinate with each other. Only the Editor-in-Chief brings things to me.">
+
+With five agents, the cost that grows fastest isn't compute. It's my attention. Routing everything through Vellum means decisions arrive grouped, framed and already argued. The work stays fast without my week disappearing into status updates.
+
+</FieldNote>
+
+<FieldNote n="2" title="The human gates didn't disappear. Some came back." rule="When agent output keeps missing the bar, that step moves to a human gate.">
+
+The desk genuinely sped up research, scripting and assembly. It didn't remove the need for judgment, and in two places it handed work back to me: plates moved from agent-made contact sheets to images I generate from the packet's briefs, and thumbnails became a manual job.
+
+I also set up a temporary early window in which I personally review every upload before it goes public, with a plan to reconsider after the fifth. I'm no longer sure I'll drop it.
+
+</FieldNote>
+
+<FieldNote n="3" title="Early packaging signals can mislead" rule="Metrics inform the next pick. They don't get to redefine the channel.">
+
+Roman myth-busting converted well early. Carthage and Nero, both "he never actually did that" stories, got real early traction, and the tempting move was to pivot to more myth-busts every day. I steered the desk back instead. Posterity's lasting lane is dark history and forgotten kingdoms told as stories, not an endless run of corrections. Aksum, Thonis-Heracleion, Nan Madol and Chan Chan are that lane.
+
+A related lesson: a brand-new channel does get *some* distribution in the Shorts feed, just unevenly. One quiet day isn't evidence that the thesis is wrong, and patience beats rewriting everything after a slow upload.
+
+</FieldNote>
+
+<FieldNote n="4" title="One master file doesn't mean one publishing behavior" rule="Each platform gets its own checklist, even when the file is identical.">
+
+The same vertical master goes to all three platforms, which suggests the publishing step is the same job done three times. It isn't. Instagram's create flow defaults to a square crop and letterboxes a 9:16 video unless you change it, so forcing 9:16 before sharing became a hard rule. Early TikTok posts often hit a cold start with slow indexing, which is easy to misread as "history doesn't work on TikTok." And cross-posting waits until the YouTube Short is live, because the order is part of the strategy.
+
+</FieldNote>
+
+<FieldNote n="5" title="Silence is a QA feature" rule="Escalate approved work, not every attempt.">
+
+Vellum mute-gates every rough cut: with the sound off, does it still teach something? When a cut fails, Vellum doesn't tell me. It goes back to the desk, and I only hear about cuts that passed. That can look like withholding information, but it actually removes noise. If every internal attempt reached me, I'd be back to being the QA department, and each cut I saw would carry less signal.
+
+</FieldNote>
+
+<FieldNote n="6" title="Quality drifts as the context grows">
+
+This is the failure I understand least and notice most. Over time, the agents get noticeably sloppier, and in the same places. Thumbnail concepts get weaker, generated images lose the art direction, video and imagery drift off the phone's 9:16 framing, and the rough-cut gate starts letting through things it caught a week earlier. The longer a thread's context grows, the more human intervention the same work needs.
+
+I can't reset sessions in the agent harness I use, and I suspect that's part of the cause. Standing instructions from early in a long context seem to lose weight against everything piled on since. What I do for now is step in more often, keep standing rules in written files the agents re-read instead of relying on conversational memory, and keep my own look before every upload. None of that is a fix. It contains the problem while I work out what actually causes it.
+
+It's also the main reason I'm cautious about long-form. If a 75-second Short drifts over a few weeks, I don't yet know what happens across an hour-long story.
+
+</FieldNote>
+
+<FieldNote n="7" title="Keeping a human in the loop has a bill" rule="Budget for the human loop, in hours and in tokens.">
+
+Keeping myself in the loop is the right call for quality, but it isn't free. Every correction, re-brief and round of back-and-forth costs tokens, on top of the agents' own inefficiency, and I regularly hit my weekly usage limit around day five. The system works. It's also nothing like the cheap, passive machine the "start a faceless channel and let AI print money" pitch describes.
+
+</FieldNote>
+
+## What this says about agent design
+
+Posterity is a media project, but most of what it taught me applies to any agentic system that does real work:
+
+- **Design who talks to whom, not just the agents.** Who is allowed to talk to the human matters as much as what each agent can do.
+- **Coordinate through artifacts.** A fixed-shape document can be inspected, reviewed and corrected in a way a conversation can't.
+- **Place gates on purpose.** Put human judgment where taste and risk concentrate, and let agents gate each other quietly everywhere else.
+- **Write taste down where you can.** Named systems and standing rules let every stage check the parts of quality that can be checked.
+- **Expect degradation.** Long-running agents don't hold their quality by default. Plan for re-grounding and extra review from the start.
+- **Count the human's cost.** A human-in-the-loop design only lasts if the loop is affordable.
+
+A system can be meaningfully agentic without pretending the human has left the room. Posterity works because I stopped trying to remove myself and started deciding exactly where I belong in it.
+
+## What's next
+
+Two open questions. The first is content selection. The desk is still exploring, trying angles and watching what holds. As weeks of analytics accumulate, I expect the picks to settle into a formal set of recurring series.
+
+The second is long-form. I'd like to take the same kind of story to an hour. Whether this desk can hold its quality over that length, given what I've seen of drift, is something I'll find out one day at a time.
+
+<PosterityWatch />

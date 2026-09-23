@@ -38,10 +38,17 @@ export default function AutomationPage() {
             <Link
               key={post.slug}
               href={`/automation/${post.slug}`}
-              className="group block min-w-0 break-words p-6 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/30 rounded-xl transition-all duration-300"
+              className={`group relative block min-w-0 break-words overflow-hidden p-6 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/30 rounded-xl transition-all duration-300 ${
+                post.frontmatter.theme ? `listing-theme-${post.frontmatter.theme}` : ""
+              }`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
+                  {post.frontmatter.eyebrow && (
+                    <p className="listing-eyebrow mb-3 font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                      {post.frontmatter.eyebrow}
+                    </p>
+                  )}
                   <h2 className="text-2xl font-bold mb-2 group-hover:text-cyan-400 transition-colors">
                     {post.frontmatter.title}
                   </h2>

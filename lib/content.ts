@@ -40,7 +40,13 @@ export interface PostFrontmatter {
   subtitle?: string;
   /** Meta description override; falls back to summary. */
   description?: string;
+  /** Document title override; falls back to title. */
+  seoTitle?: string;
   eyebrow?: string;
+  /** Long-form article header and typography. */
+  layout?: "longform";
+  /** Scoped visual theme for a case study. */
+  theme?: "posterity";
   tags: string[];
   status: PostStatus;
   product?: ProductMeta;
