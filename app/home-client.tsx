@@ -232,12 +232,12 @@ function FeaturedProducts({ products }: { products: FeaturedProduct[] }) {
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       }`}
     >
-      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03]">
+      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition-colors duration-300 hover:border-white/20">
         <div
           aria-hidden
-          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"
         />
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 px-6 pt-6">
+        <div className="relative flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 px-6 pt-6">
           <h3 className="text-xl font-bold text-white">Products</h3>
           <Link
             href="/products"
@@ -247,13 +247,13 @@ function FeaturedProducts({ products }: { products: FeaturedProduct[] }) {
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
-        <p className="px-6 pt-2 text-sm leading-relaxed text-zinc-400 max-w-xl">
+        <p className="relative px-6 pt-2 text-sm leading-relaxed text-zinc-400 max-w-xl">
           Software I&apos;ve shipped and sell. Built with the same curiosity as
           everything below, finished to the standard of something people pay
           for.
         </p>
 
-        <ul className="mt-5 border-t border-white/[0.07]">
+        <ul className="relative mt-5 border-t border-white/[0.07]">
           {products.map((product) => (
             <li key={product.slug}>
               <Link
