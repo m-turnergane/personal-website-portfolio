@@ -81,9 +81,9 @@ export function SiteHeader() {
 
               {/* Name + tagline - hidden on small mobile */}
               <div className="hidden sm:block">
-                <h1 className="font-heading font-bold text-lg leading-tight">
+                <p className="font-heading font-bold text-lg leading-tight">
                   {siteConfig.name}
-                </h1>
+                </p>
                 <p className="text-xs text-zinc-400">{siteConfig.tagline}</p>
               </div>
             </Link>
@@ -98,7 +98,7 @@ export function SiteHeader() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`px-4 py-2 text-sm transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-neutral-900 ${
+                  className={`whitespace-nowrap px-2.5 py-2 text-sm lg:px-4 transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-neutral-900 ${
                     isActive(item.href)
                       ? "text-white bg-white/5 border-b-2 border-white/20 font-medium"
                       : "text-zinc-400 hover:text-white hover:bg-white/[0.03]"

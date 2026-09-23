@@ -6,6 +6,14 @@ import { RiskAssessmentDiagram } from "./risk-assessment-diagram";
 import { SentimentPipelineDiagram } from "./sentiment-pipeline-diagram";
 import { TradeoffsTable } from "./tradeoffs-table";
 import { ImageStrip } from "./image-strip";
+import { isValidElement, type ComponentType, type ReactNode } from "react";
+import { highlight } from "sugar-high";
+import { DeliveryVsEffect } from "./products/delivery-vs-effect";
+import { CrashPointExplorer } from "./products/crash-point-explorer";
+import { SequenceStrip } from "./products/sequence-strip";
+import { Invariant } from "./products/invariant";
+import { ConformanceRun } from "./products/conformance-run";
+import { ValidationReceipts } from "./products/validation-receipts";
 
 // Custom MDX components
 const components = {
@@ -95,10 +103,77 @@ const components = {
   ),
 };
 
-export function MDXContent({ content }: { content: string }) {
+function textOf(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return textOf(node.props.children);
+  }
+  return "";
+}
+
+function slugify(node: ReactNode): string {
+  return textOf(node)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
+
+const productComponents = {
+  ...components,
+  DeliveryVsEffect,
+  CrashPointExplorer,
+  SequenceStrip,
+  Invariant,
+  ConformanceRun,
+  ValidationReceipts,
+  h2: ({ children, ...props }: any) => (
+    <h2 id={slugify(children)} {...props}>
+      {children}
+    </h2>
+  ),
+  h3: ({ children, ...props }: any) => (
+    <h3 id={slugify(children)} {...props}>
+      {children}
+    </h3>
+  ),
+  p: (props: any) => <p {...props} />,
+  ul: (props: any) => <ul {...props} />,
+  ol: (props: any) => <ol {...props} />,
+  li: (props: any) => <li {...props} />,
+  blockquote: (props: any) => <blockquote {...props} />,
+  pre: (props: any) => <pre {...props} />,
+  code: ({ className, children, ...props }: any) => {
+    if (!className) return <code {...props}>{children}</code>;
+    return (
+      <code
+        className={className}
+        dangerouslySetInnerHTML={{ __html: highlight(String(children).trimEnd()) }}
+      />
+    );
+  },
+};
+
+export function MDXContent({
+  content,
+  variant = "default",
+  components: extraComponents,
+}: {
+  content: string;
+  variant?: "default" | "product";
+  components?: Record<string, ComponentType<any>>;
+}) {
+  const base = variant === "product" ? productComponents : components;
   return (
-    <div className="prose prose-invert max-w-none">
-      <MDXRemote source={content} components={components} />
+    <div
+      className={
+        variant === "product"
+          ? "prose prose-invert prose-product"
+          : "prose prose-invert max-w-none"
+      }
+    >
+      <MDXRemote source={content} components={{ ...base, ...extraComponents }} />
     </div>
   );
 }

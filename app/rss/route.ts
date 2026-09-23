@@ -9,9 +9,11 @@ export async function GET() {
   const automation = getAllPosts("automation");
   const writing = getAllPosts("writing");
   const trading = getAllPosts("trading");
+  const products = getAllPosts("products");
 
   // Combine all posts with their collection type
   const allPosts = [
+    ...products.map((p) => ({ ...p, collection: "products" })),
     ...projects.map((p) => ({ ...p, collection: "projects" })),
     ...automation.map((p) => ({ ...p, collection: "automation" })),
     ...writing.map((p) => ({ ...p, collection: "writing" })),

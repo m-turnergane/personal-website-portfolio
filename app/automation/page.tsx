@@ -38,7 +38,7 @@ export default function AutomationPage() {
             <Link
               key={post.slug}
               href={`/automation/${post.slug}`}
-              className="group block p-6 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/30 rounded-xl transition-all duration-300"
+              className="group block min-w-0 break-words p-6 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/30 rounded-xl transition-all duration-300"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">

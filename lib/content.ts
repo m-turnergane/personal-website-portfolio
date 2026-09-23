@@ -2,16 +2,48 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 
-export type Collection = "trading" | "projects" | "automation" | "writing";
+export type Collection =
+  | "trading"
+  | "projects"
+  | "automation"
+  | "writing"
+  | "products";
 
 export type PostStatus = "published" | "draft" | "coming-soon";
+
+export interface ProductPricing {
+  edition: string;
+  price: string;
+  terms: string[];
+}
+
+export interface ProductMeta {
+  name: string;
+  tagline: string;
+  version: string;
+  license: string;
+  stack: string[];
+  /** Canonical product site URL, without attribution parameters. */
+  url: string;
+  /** utm_campaign value for outbound links to the product site. */
+  campaign: string;
+  /** utm_content value identifying the article surface. */
+  attribution: string;
+  pricing?: ProductPricing;
+}
 
 export interface PostFrontmatter {
   title: string;
   date: string;
+  updated?: string;
   summary: string;
+  subtitle?: string;
+  /** Meta description override; falls back to summary. */
+  description?: string;
+  eyebrow?: string;
   tags: string[];
   status: PostStatus;
+  product?: ProductMeta;
   links?: {
     github?: string;
     live?: string;
@@ -113,6 +145,18 @@ export function getAllSlugs(collection: Collection): string[] {
 }
 
 /**
+ * Estimate reading time in minutes, ignoring JSX component tags
+ */
+export function readingTime(content: string): number {
+  const words = content
+    .replace(/<[^>]+>/g, " ")
+    .replace(/```[\s\S]*?```/g, " ")
+    .split(/\s+/)
+    .filter(Boolean).length;
+  return Math.max(1, Math.round(words / 230));
+}
+
+/**
  * Format a date string
  */
 export function formatDate(dateString: string): string {
@@ -121,5 +165,6 @@ export function formatDate(dateString: string): string {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   });
 }

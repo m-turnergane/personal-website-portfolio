@@ -1,0 +1,241 @@
+---
+title: "Stripe Webhook Idempotency: Why Deduplicating Event IDs Isn't Enough"
+subtitle: "Your webhook returned 200. That doesn't mean your customer ended up in the right state."
+eyebrow: "Products · The story behind Billing Reliability Harness"
+date: "2026-09-23"
+summary: "Why event.id deduplication stops short of correct billing state, the failure modes that slip past it, and the conformance harness I built to test for them."
+description: "Deduplicating Stripe event IDs stops duplicate deliveries, not duplicate effects. Where webhook handlers fail under retries, crashes and stale entitlement events."
+tags: ["Stripe", "Webhooks", "Idempotency", "TypeScript", "PostgreSQL", "Billing"]
+status: "published"
+product:
+  name: "Billing Reliability Harness"
+  tagline: "Production-focused reliability tooling for Stripe Entitlements & Checkout."
+  version: "v0.2.0"
+  license: "Commercial"
+  stack: ["TypeScript", "Stripe", "PostgreSQL", "Node.js 20 · 22"]
+  url: "https://stripe-entitlements-harness-webapp.vercel.app/"
+  campaign: "brh"
+  attribution: "stripe-webhook-idempotency"
+  pricing:
+    edition: "Founding Edition"
+    price: "$79 USD"
+    terms:
+      - "One-time payment"
+      - "Full source code"
+      - "Commercial use"
+      - "Unlimited applications you own"
+      - "Updates through v1.x"
+      - "No license server, deployment fee, subscription or revenue share"
+---
+
+Most Stripe webhook handlers I've read end the same way. Verify the signature, check the event ID, do the work, return 200. The status code is treated as the finish line, and a column of green deliveries in the Stripe dashboard is taken as evidence that billing works.
+
+A 200 tells you something much narrower. It says your endpoint accepted a request. It doesn't tell you whether the customer who paid now has access, whether they have it exactly once, or whether the access you stored still matches Stripe after the next few events arrive out of order.
+
+I didn't come to this through an outage of my own. I came to it by reading. Over a few weeks of looking at where developers struggle with billing integrations, the same class of bug kept surfacing: in the issue trackers of widely used billing and auth libraries, and in threads from people discovering, well after the fact, that their database and Stripe disagreed. The bugs were rarely in signature verification or routing. They lived in the space between receiving an event and the business state that event was supposed to produce.
+
+The useful question to ask of a webhook handler is whether the intended business effect happened exactly once, and stayed correct, across retries, crashes, concurrent workers, stale events and partial writes. Whether Stripe reached the endpoint is a much smaller question.
+
+## Two kinds of idempotency
+
+Stripe is explicit that delivery is at-least-once. The [webhook docs](https://docs.stripe.com/webhooks) say an endpoint "might occasionally receive the same event more than once" and recommend logging the event IDs you've processed. That advice is correct, and it's where most integrations stop.
+
+What it gives you is **delivery idempotency**: the same delivery, arriving twice, is processed once. The property you actually want is **business-effect idempotency**: one purchase produces one grant, however many times and by however many paths your system hears about it.
+
+Those two come apart more often than you'd expect. The same page notes that in some cases Stripe generates two separate Event objects for one change, and suggests identifying them by the object in `data.object` together with the event type. Stripe's [Checkout fulfillment guide](https://docs.stripe.com/checkout/fulfillment) goes further. It recommends running fulfillment from your success page as well as from the webhook, and warns that the fulfillment function "might be called multiple times, possibly concurrently, for the same Checkout Session." The success page has no event ID at all.
+
+<DeliveryVsEffect />
+
+The fix is to name the operation instead of the message. `fulfill:cs_123` identifies the thing that must happen once. Every path that can cause it (the webhook, the redirect, a backfill job, a manual replay) derives the same key, and the database refuses to record it twice. Event IDs are still useful for logging and replay. They're the wrong unit for the guarantee.
+
+## Where a handler can fail
+
+The second problem is timing. A handler is a sequence of steps, and a process can stop between any two of them: a deploy, an out-of-memory kill, a serverless timeout, a dropped database connection. What the retry does next depends entirely on which steps left durable traces behind.
+
+<CrashPointExplorer />
+
+The naive handler survives two of those cases, and they have something in common: either nothing durable happened or everything did. The damage is in the middle, where some state committed and some didn't, and in the case where the handler told Stripe everything was fine when it wasn't.
+
+Moving the event-ID insert to the top of the handler doesn't escape this. It trades the double grant for a lost one: the ID is recorded, the worker dies before the effect, and every retry skips. Any design where the marker and the effect commit separately has a window in which they disagree.
+
+## Six failure modes worth testing
+
+These are the cases I ended up treating as the specification. None of them is exotic. Each is an ordinary consequence of at-least-once delivery, retries and concurrent writes, and each one produces the wrong billing state without raising an error.
+
+### Duplicate delivery
+
+**What goes wrong.** Stripe redelivers an event, or two code paths trigger the same fulfillment, and the effect is applied twice. For a boolean access flag that may be harmless. For credits, seats or anything else you count, it's a real bug with a dollar value.
+
+**Why naive code misses it.** Duplicate handling is usually tested by replaying one event ID. That exercises the one duplicate the dedupe table was built for and none of the others.
+
+<Invariant>A logical operation commits at most once, no matter how many deliveries or code paths reach it.</Invariant>
+
+### Persistence failure
+
+**What goes wrong.** The database write fails after the signature checks out: a constraint violation, a pool timeout, a failover. The handler catches the error, logs it and returns 200 so that Stripe stops retrying.
+
+**Why naive code misses it.** The catch block looks like defensive programming, and the dashboard shows a successful delivery. The only signal is a log line nobody is paged on, and a customer who paid for something they don't have.
+
+<Invariant>The endpoint doesn't return 2xx until the effect, or a durable record of the obligation to perform it, has committed.</Invariant>
+
+### Post-commit bookkeeping failure
+
+**What goes wrong.** The business write commits. The follow-up write that records the work as done (marking the event processed, updating an operations table) fails or never runs. The retry arrives with no evidence that the work already happened, and does it again.
+
+**Why naive code misses it.** Each write is correct on its own, and tests run them together on the happy path. The failure lives in the gap between two transactions, and ordinary tests never open that gap.
+
+<Invariant>The record that an operation happened commits in the same transaction as the operation itself.</Invariant>
+
+### Stale entitlement event
+
+**What goes wrong.** Stripe "doesn't guarantee the delivery of events in the order that they're generated." An `entitlements.active_entitlement_summary.updated` event from before a cancellation can arrive after the one that reflects it. A handler that writes each payload as it lands gives access back to a customer who no longer has it.
+
+**Why naive code misses it.** The obvious fix is to compare timestamps, and Stripe's docs rule that out too: `created` is recorded in seconds, distinct events can share a value, and the docs say not to use it to determine order.
+
+<SequenceStrip variant="stale-event" />
+
+<Invariant>Stored entitlements converge to what Stripe currently says, whatever order the events arrive in.</Invariant>
+
+### Concurrent customer updates
+
+**What goes wrong.** Two events for the same customer are handled by two workers at once. Each reads the current state, computes a new one and writes it back. The second write discards the first, and both requests succeed.
+
+**Why naive code misses it.** Local development and most test suites handle one request at a time. The race needs two workers interleaving between a read and a write, which in practice only production traffic produces.
+
+<SequenceStrip variant="concurrent-updates" />
+
+<Invariant>Updates for one customer are serialized, or a write based on a stale read is rejected.</Invariant>
+
+### Entitlements beyond the summary
+
+**What goes wrong.** The summary event carries a list of the customer's active entitlements, and that list is capped. Stripe's [Entitlements guide](https://docs.stripe.com/billing/entitlements) says `entitlements.data` holds at most 10 entries, and that for customers with more you should fetch the complete, paginated list. A handler that stores `entitlements.data` as the full set silently drops everything past the tenth.
+
+**Why naive code misses it.** Test customers have two or three features. The list's `has_more` flag is present in every payload and false in every fixture anyone writes by hand.
+
+<Invariant>The stored set comes from a complete read of the customer's active entitlements, never from one page of it.</Invariant>
+
+One more case belongs next to these if you sell one-time purchases through the same code. `checkout.session.completed` in payment mode has no subscription, and handlers written around subscriptions tend to assume one exists. That's a crash rather than a silent error, but it's a crash on a successful payment, which is the worst time for one.
+
+## Returning 200 is a promise
+
+Most of the failures above end with a 2xx that shouldn't have been sent. It's worth being precise about what that status code means to Stripe, because the system behaves very differently on either side of it.
+
+A non-2xx response is a request to try again. In live mode, Stripe retries for up to three days with exponential backoff. Sandbox retries are much sparser: three attempts over a few hours. A 2xx ends all of that. As far as Stripe is concerned the event is delivered, and any work that didn't happen is now yours alone to notice.
+
+So a 200 is a claim: *I have durably taken responsibility for this event.* This handler makes that claim without being entitled to it.
+
+```ts
+export async function POST(req: Request) {
+  const event = await verifyStripeEvent(req);
+  try {
+    await grantAccess(event);
+  } catch (err) {
+    // Feels defensive. Turns a transient failure
+    // into permanent data loss.
+    logger.error("grant failed", err);
+  }
+  return new Response(null, { status: 200 });
+}
+```
+
+Letting the error propagate is the smallest correct change. A failed write becomes a 500, Stripe retries, and a transient outage heals itself. The customer's access arrives late instead of never.
+
+```ts
+export async function POST(req: Request) {
+  // Bad signature: 400, no side effects.
+  const event = await verifyStripeEvent(req);
+  // Throws: 500, and Stripe retries.
+  await grantAccess(event);
+  return new Response(null, { status: 200 });
+}
+```
+
+Failing loudly has costs of its own. An event that can never succeed will fail on every retry until the window closes, so those errors have to be visible to someone. But a failure you can see and triage is recoverable. A failure absorbed into a 200 usually isn't discovered until a customer reports it.
+
+There's a real tension with Stripe's other advice, which is to return a 2xx quickly, before any complex logic that could time out. The two fit together once you're specific about what "durable" means. At modest volume, a short transactional write followed by the acknowledgement is fast enough. Beyond that, persist the event to a durable inbox or queue, acknowledge, and process it out of band under the same idempotency rules. What doesn't work is acknowledging first and hoping the work happens later.
+
+## Events as signals, current state as the authority
+
+The stale-event and truncation failures have the same root cause: treating the event payload as the authoritative state of the customer. It's a snapshot of one moment, delivered at some later and unordered moment, and possibly incomplete.
+
+The design that holds up is to treat an entitlement event as a signal that something changed for this customer, then read the current truth and store that. Stripe's guide points the same way: listen for the summary webhook, and use the List Active Entitlements API, among other things, "to reconcile state after a webhook delivery failure."
+
+```ts
+async function reconcileEntitlements(customerId: string) {
+  await withCustomerLock(customerId, async (tx) => {
+    const list = stripe.entitlements.activeEntitlements.list({
+      customer: customerId,
+      limit: 100,
+    });
+    const lookupKeys: string[] = [];
+    for await (const entitlement of list) {
+      lookupKeys.push(entitlement.lookup_key);
+    }
+    await tx.replaceEntitlements(customerId, lookupKeys);
+  });
+}
+```
+
+This makes delivery order largely irrelevant. It doesn't matter whether the pre-cancellation event arrives first or last, because neither payload is written; both trigger a read of what's true now. The SDK's auto-pagination walks the full list instead of trusting the first page. The lock covers the part ordering can't: two reconciliations for the same customer still need to be serialized, and the read has to happen inside that critical section, or an older read can still commit last.
+
+It costs an API call per event. For entitlements, where a wrong answer means giving away the product or withholding something a customer paid for, that's usually a good trade.
+
+## What I built
+
+By this point I had a list of invariants and no reliable way to tell whether a given integration satisfied them. Architecture advice is easy to agree with and easy to get subtly wrong. I wanted these assumptions to become executable tests.
+
+That became **Billing Reliability Harness**, a TypeScript reliability and conformance kit for teams already running Stripe Checkout or Billing against their own database. It's a small runtime with a much larger body of proof around it:
+
+- **A TypeScript runtime** for Node 20 and 22, covering signature verification, event leasing, business-operation deduplication and entitlement reconciliation.
+- **PostgreSQL primitives**: durable event leases, fencing for stale workers that wake up after their lease has expired, and transactional operation records.
+- **SQL migrations** for the schema those primitives depend on.
+- **The E1–E9 conformance suite**, an executable specification that runs against your implementation, not mine.
+- **Failure-injection fixtures**, including deliberately broken implementations the suite has to reject.
+- **A Next.js App Router reference integration** that wires everything together end to end.
+- **A compiled package and the full source**, so you can install it without a build step and still read and change every line.
+
+I built on PostgreSQL because the guarantees are transactional, and the transaction that matters is the one that writes your entitlement rows. Keeping leases and operation records in the same database is what lets the operation record and the business write commit together, and most of the failure modes above reduce to that one invariant. The runtime is written against persistence interfaces, so another transactional store is possible, but PostgreSQL is the implementation that ships and the one the tests run against.
+
+## The tests are the product
+
+Webhook boilerplate isn't especially valuable. Anyone reading this could write the handler in an afternoon, and the fragments above are most of it. The hard part is knowing that the version you wrote is correct under redelivery, partial failure and concurrency, because none of those appear when you read the code or click through Checkout in a sandbox.
+
+So the part I care most about is the suite. It drives failure conditions at an implementation and reports on each control separately. It's written to be hostile, and it ships with implementations that are wrong on purpose. If it ever passes one of them, the suite is what's broken.
+
+<ConformanceRun />
+
+The rule I'm strictest about is the third state. A control that was never exercised reports **SKIPPED**, and SKIPPED means unproven. It's never folded into the pass count. A suite that quietly skips its concurrency tests and still prints a green summary is worse than having no suite, because it manufactures confidence. Silence isn't success.
+
+## Validation receipts
+
+These are the verification signals for the current release. I'm listing them because they describe what has actually been exercised, not because the numbers are large.
+
+<ValidationReceipts />
+
+The PostgreSQL tests matter most to me. They run against a real database with real concurrent connections, which is the only place lease contention and lost updates actually happen. The sandbox run matters for a different reason: fixtures encode my understanding of Stripe's payloads, and running the full lifecycle against a real Stripe sandbox checks that understanding against Stripe itself.
+
+## What the harness does not prove
+
+Reliability claims are only useful when their edges are stated, so here are the edges.
+
+1. **A lease isn't exactly-once.** An event lease stops two workers from processing the same event at the same time. Exactly-once business effects come from a stable operation identity. If one logical purchase can produce two different operation keys, it can produce two effects, and no lease will notice.
+2. **Transaction boundaries are still yours.** The guarantee depends on the operation record and the business write committing together. Split them across transactions, or across databases, and it's gone.
+3. **Remote side effects are outside the transaction.** A rollback can't unsend an email, undo a provisioning call or reverse a charge somewhere else. Those need their own idempotency keys or an outbox.
+4. **Timestamps don't order events.** Event creation times aren't an ordering token. The harness reconciles against current state instead of sorting by time, and your own code should too.
+5. **Inline processing has a ceiling.** Handling the event inside the webhook request is fine at modest volume. At high throughput, durably enqueue before acknowledging and process out of band.
+
+The harness doesn't make billing infallible. What it gives you is a named list of failure modes, a control for each, and a test that goes red when a control is missing.
+
+## Why source, not SaaS
+
+The obvious way to sell this would have been as a hosted service: a webhook proxy, or a monitor that watches your events and alerts on drift. I decided against that for the same reason the harness exists. A reliability layer that depends on someone else's uptime, or phones home to check a license, adds a failure mode to the system it's supposed to harden. It would also put a third party between Stripe and your database, which I don't think most teams should accept for billing events.
+
+So it's a kit. You buy the source once, run it inside your own application against your own database, and it keeps working whether or not the product site is still around. The pricing follows from the same reasoning: one payment, then nothing that can expire, meter usage or check in with me at runtime.
+
+<ProductCallout />
+
+## Try to break yours
+
+If you're running Stripe against your own database, the six cases above are worth testing whether or not you ever look at the harness. Kill the process between the business write and the bookkeeping, then replay the event. Deliver two entitlement summaries in the wrong order. Give a test customer eleven features. A handler built from the usual sample shape fails several of those, quietly, with a 200.
+
+If you think one of these invariants is wrong, or I've missed a failure mode, I'd like to hear it at [onborrowedtime.obt@gmail.com](mailto:onborrowedtime.obt@gmail.com). The full failure model and documentation are on <ProductLink>the product site</ProductLink>.

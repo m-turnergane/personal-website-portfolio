@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@theme {
+  /* Semantic verification states, always paired with a text label */
+  --color-state-pass: #86efac;
+  --color-state-fail: #fca5a5;
+  --color-state-skip: #fcd34d;
+}
+
 /* ========== CSS Variables & Theme ========== */
 :root {
   /* Font families */
@@ -39,7 +46,6 @@
 
 /* ========== Base Styles ========== */
 html {
-  min-width: 360px;
   color-scheme: dark;
   scroll-behavior: smooth;
 }
@@ -288,6 +294,109 @@ samp {
   border: none;
   border-top: 1px solid var(--border-subtle);
   margin: 2rem 0;
+}
+
+/* ========== Product Article ========== */
+/* Text measures stay readable; figures use the full column. */
+.prose.prose-product {
+  max-width: none;
+  font-size: 1.0625rem;
+}
+
+.prose-product > p,
+.prose-product > ul,
+.prose-product > ol,
+.prose-product > h2,
+.prose-product > h3,
+.prose-product > h4,
+.prose-product > blockquote,
+.prose-product > pre {
+  max-width: 68ch;
+}
+
+.prose-product p,
+.prose-product li {
+  line-height: 1.75;
+}
+
+.prose-product > p:first-child {
+  margin-top: 0 !important;
+}
+
+.prose-product h2 {
+  font-size: 1.625rem;
+  line-height: 1.25;
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 6rem;
+  text-wrap: balance;
+}
+
+.prose-product h3 {
+  font-size: 1.1875rem;
+  line-height: 1.35;
+  margin-top: 2.5rem;
+  margin-bottom: 0.5rem;
+  scroll-margin-top: 6rem;
+}
+
+.prose-product ul,
+.prose-product ol {
+  list-style-position: outside;
+  padding-left: 1.25rem;
+}
+
+.prose-product li {
+  margin: 0.5rem 0;
+  padding-left: 0.25rem;
+}
+
+.prose-product li::marker {
+  color: var(--text-muted);
+}
+
+.prose-product pre {
+  margin: 1.5rem 0;
+  background-color: #0d0d0f;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+}
+
+.prose-product code {
+  overflow-wrap: anywhere;
+}
+
+.prose-product pre code {
+  overflow-wrap: normal;
+}
+
+.prose-product .product-figure {
+  margin: 2.5rem 0;
+}
+
+/* Hand typography inside embedded components back to their utility classes. */
+.prose .not-prose :is(p, ul, ol, li, a, code, h2, h3, h4, strong) {
+  margin: revert-layer;
+  padding: revert-layer;
+  color: revert-layer;
+  font-size: revert-layer;
+  line-height: revert-layer;
+  list-style: revert-layer;
+  background: revert-layer;
+  border: revert-layer;
+  border-radius: revert-layer;
+  text-decoration: revert-layer;
+  max-width: revert-layer;
+}
+
+@media (min-width: 640px) {
+  .prose.prose-product {
+    font-size: 1.09375rem;
+  }
+
+  .prose-product h2 {
+    font-size: 1.75rem;
+  }
 }
 
 /* ========== Scrollbar Styles ========== */

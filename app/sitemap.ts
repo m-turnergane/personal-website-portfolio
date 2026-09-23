@@ -1,4 +1,4 @@
-import { getAllSlugs } from "@/lib/content";
+import { getAllSlugs, getPublishedPosts } from "@/lib/content";
 import { siteConfig } from "@/lib/site-config";
 import type { MetadataRoute } from "next";
 
@@ -12,6 +12,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/products`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/projects`,
@@ -40,6 +46,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   // Dynamic routes from content collections
+  const productRoutes: MetadataRoute.Sitemap = getPublishedPosts(
+    "products"
+  ).map((post) => ({
+    url: `${baseUrl}/products/${post.slug}`,
+    lastModified: new Date(post.frontmatter.updated ?? post.frontmatter.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   const projectSlugs = getAllSlugs("projects");
   const projectRoutes: MetadataRoute.Sitemap = projectSlugs.map((slug) => ({
     url: `${baseUrl}/projects/${slug}`,
@@ -76,6 +91,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...staticRoutes,
+    ...productRoutes,
     ...projectRoutes,
     ...automationRoutes,
     ...writingRoutes,

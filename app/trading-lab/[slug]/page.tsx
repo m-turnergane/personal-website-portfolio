@@ -61,13 +61,13 @@ export default async function TradingPostPage({
 
       <header className="mb-12">
         <div className="flex items-start justify-between gap-4 mb-4">
-          <h1 className="text-4xl md:text-5xl font-bold flex-1 text-zinc-100">
+          <h1 className="text-4xl md:text-5xl font-bold flex-1 min-w-0 break-words text-zinc-100">
             {frontmatter.title}
           </h1>
 
           {/* Social Link Icons */}
           {frontmatter.links && (
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-3">
               {frontmatter.links.github && (
                 <a
                   href={frontmatter.links.github}
