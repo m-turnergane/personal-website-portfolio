@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { getPublishedPosts } from "@/lib/content";
+import { formatDate, getPublishedPosts } from "@/lib/content";
 import { withAttribution } from "@/lib/attribution";
 import { TrackedLink } from "@/app/components/products/tracked-link";
 import { ConformanceMotif } from "@/app/components/products/conformance-motif";
@@ -70,7 +70,12 @@ export default function ProductsPage() {
                     <p className="mt-2 text-lg text-zinc-300">
                       {product.tagline}
                     </p>
-                    <p className="mt-5 text-sm text-zinc-500">The write-up</p>
+                    <p className="mt-5 text-sm text-zinc-500">
+                      The write-up ·{" "}
+                      <time dateTime={frontmatter.date}>
+                        {formatDate(frontmatter.date)}
+                      </time>
+                    </p>
                     <p className="mt-1 text-zinc-300">{frontmatter.title}</p>
                   </div>
                   <ConformanceMotif className="hidden md:block pt-8 opacity-80 transition-opacity group-hover:opacity-100" />
