@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-23",
+  "updated": "2026-09-24",
   "timezone": "America/New_York",
   "brand": {
     "name": "Posterity",
@@ -183,6 +183,20 @@
         "youtube": "https://www.youtube.com/shorts/UzygZcQvITE",
         "tiktok": "https://www.tiktok.com/@posterity.archive/video/7688821604184280340",
         "instagram": "https://www.instagram.com/reels/DdpGNRWqQcm/"
+      }
+    },
+    {
+      "day": 9,
+      "date": "2026-09-24",
+      "slug": "sigiriya-kassapa",
+      "title": "The Parricide King’s Rock Capital",
+      "lane": "rock capital",
+      "status": "live",
+      "youtubeShortsId": "236Nz0a7DXc",
+      "links": {
+        "youtube": "https://www.youtube.com/shorts/236Nz0a7DXc",
+        "tiktok": "https://www.tiktok.com/@posterity.archive/video/7689119570241621300",
+        "instagram": "https://www.instagram.com/p/DdrMbUJqdYR/"
       }
     }
   ]
